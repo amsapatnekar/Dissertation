@@ -90,10 +90,27 @@ def find_length(empty_list, check_csv):
 
 if __name__ == "__main__":
     # Option A — chain directly
-    empty_records = check_pdb_files("/path/to/pdbs/")
+    empty_records = check_pdb_files("~/Dissertation")
     check_csv     = pd.read_csv("mobidb_filtered_data.csv")
     find_length(empty_records, check_csv)
 
     # Option B — load from saved CSV
     # find_length("empty_pdb_files.csv", "mobidb_filtered_data.csv")
+
+
+def fasta_down(csv_path):
+    df = pd.read_csv(csv_path)  # read the CSV file properly
     
+    filtered = df[df['length'] < 1500]
+    
+    fasta_list = [
+        f"https://rest.uniprot.org/uniprotkb/{uid}.fasta"
+        for uid in filtered['uniprot_id']
+    ]
+    
+    fasta_df = pd.DataFrame(fasta_list, columns=['fasta_url'])
+    with open("fasta_urls.txt", "w") as f:
+        for url in fasta_df['fasta_url']:
+            f.write(url + "\n")
+    return fasta_list
+
